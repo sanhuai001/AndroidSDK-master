@@ -1,0 +1,17 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="err_msg_default">Failed</string>
+    <string name="err_msg_ok">OK</string>
+    <string name="err_msg_no_available_network">No Available Network</string>
+    <string name="err_msg_timeout">Request Timeout</string>
+    <string name="err_msg_unattached_fragment">Bad Request</string>
+    <string name="err_msg_unexpected_response">Unexpected Response</string>
+    <string name="err_msg_cancelled">Cancelled Request</string>
+    <string name="err_msg_multiple_request" tools:ignore="TypographyEllipsis">Loading...</string>
+
+    <string name="permission_denied">Permission denied:\n%s</string>
+    <string name="permission_canceled">Permission canceled.</string>
+
+    <string name="unavailable_external_storage">External storage is unavailable</string>
+    <string name="picture_saved_format">Picture saved to %s</string>
+    <string name="share_picture">Share Picture</string>
+</resources>

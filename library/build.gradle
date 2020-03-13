@@ -1,0 +1,94 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion 29
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.annotation:annotation:1.1.0'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.github.shxhzhxx:ImageLoader:2.1.8'
+    implementation 'com.github.shxhzhxx:UrlLoader:2.2.0'
+    implementation 'com.github.yalantis:ucrop:2.2.2'
+    implementation 'com.github.chrisbanes:PhotoView:2.1.4'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.2'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.2.2'
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    //1.1.0 androidx 版本 下拉刷新，上拉加载第三方库
+    implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0'
+    implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0'
+    //jackson 2.9.7 不兼容Android7.0以下的系统   https://github.com/FasterXML/jackson-module-kotlin/issues/176
+    def jackson_version = "2.9.6"
+    implementation "com.fasterxml.jackson.core:jackson-databind:$jackson_version"
+    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:$jackson_version"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-json-org:$jackson_version"
+    def lifecycle_version = "2.2.0"
+    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+    //noinspection LifecycleAnnotationProcessorWithJava8
+    kapt "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
+    implementation "androidx.core:core-ktx:1.2.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+
+//// 指定编码
+//tasks.withType(JavaCompile) {
+//    options.encoding = "UTF-8"
+//}
+//
+//// 打包源码
+//task sourcesJar(type: Jar) {
+//    from android.sourceSets.main.java.srcDirs
+//    archiveClassifier.set('sources')
+//}
+//
+//task javadoc(type: Javadoc) {
+//    failOnError  false
+//    source = android.sourceSets.main.java.sourceFiles
+//    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+//    classpath += configurations.compile
+//}
+//
+//// 制作文档(Javadoc)
+//task javadocJar(type: Jar, dependsOn: javadoc) {
+//    archiveClassifier.set('javadoc')
+//    from javadoc.destinationDir
+//}
+
+//artifacts {
+//    archives sourcesJar
+//    archives javadocJar
+//}
+repositories {
+    mavenCentral()
+}
+
+uploadArchives {
+    repositories {
+        apply plugin: 'maven'
+        mavenDeployer {
+            repository(url: "file://D://WorkSpace/myaar/repository/")
+            pom.groupId = "com.uuabc.lib"
+            pom.artifactId = "androidsdk"
+            pom.version = "1.0.0"
+        }
+    }
+}
