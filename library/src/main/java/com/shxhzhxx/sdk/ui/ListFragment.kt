@@ -38,8 +38,12 @@ abstract class ListFragment<M, VH : RecyclerView.ViewHolder, A : RecyclerView.Ad
         refresh()
     }
 
-    protected open fun refresh() {
-        smartRefreshLayout.autoRefresh()
+    open fun refresh() {
+        smartRefreshLayout?.autoRefresh()
+    }
+
+    open fun onRefresh() {
+        smartRefreshLayout?.autoRefresh()
     }
 
     /**
@@ -98,6 +102,7 @@ abstract class ListFragment<M, VH : RecyclerView.ViewHolder, A : RecyclerView.Ad
                     loading = false
                     smartRefreshLayout?.finishRefresh()
                     smartRefreshLayout?.finishLoadMore()
+                    smartRefreshLayout?.setEnableRefresh(true)
                 },
                 onLoad = { list ->
                     smartRefreshLayout?.setEnableLoadMore(list.size == pageSize())
