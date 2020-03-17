@@ -43,7 +43,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 const val TAG = "Net"
-const val CODE_OK = 0
+const val CODE_OK = 200
 const val CODE_NO_AVAILABLE_NETWORK = -1
 const val CODE_TIMEOUT = -2
 const val CODE_UNEXPECTED_RESPONSE = -3
@@ -60,11 +60,11 @@ enum class PostType {
 }
 
 private data class Response(
-        @JsonAlias("errorCode", "code") val errno: Int,
-        @JsonAlias("tips", "errorMsg", "message") val msg: String,
-        @JsonAlias("jsondata") val data: String?
+        @JsonAlias("code") val errno: Int,
+        @JsonAlias("msg") val msg: String,
+        @JsonAlias("data") val data: String?
 ) {
-    val isSuccessful get() = errno == 0
+    val isSuccessful get() = errno == 200
 }
 
 private data class Wrapper<T>(val wrapper: T)
@@ -185,6 +185,7 @@ class Net(context: Context) : TaskManager<(errno: Int, msg: String, data: Any?) 
             .build()
     private val lifecycleSet = HashSet<Lifecycle>()
     var commonParams: (JSONObject) -> JSONObject = { it }
+    var headersMap = HashMap<String, String>()
 
     val isNetworkAvailable get() = connMgr.activeNetworkInfo?.isConnected == true
     val isWifiAvailable get() = isNetworkAvailable && connMgr.activeNetworkInfo?.type == ConnectivityManager.TYPE_WIFI
@@ -231,6 +232,9 @@ class Net(context: Context) : TaskManager<(errno: Int, msg: String, data: Any?) 
         val parameters = commonParams(params ?: JSONObject())
         return inlineRequest(RequestKey(url, params), Request.Builder().also { builder ->
             builder.url(url)
+            headersMap.forEach {
+                builder.addHeader(it.key, it.value)
+            }
             if (debugMode) {
                 Log.d(TAG, "$url request:")
             }
