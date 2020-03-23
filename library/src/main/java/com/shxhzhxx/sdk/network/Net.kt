@@ -60,11 +60,11 @@ enum class PostType {
 }
 
 private data class Response(
-        @JsonAlias("code") val errno: Int,
-        @JsonAlias("msg") val msg: String,
-        @JsonAlias("data") val data: String?
+        @JsonAlias("errorCode", "code") val errno: Int,
+        @JsonAlias("tips", "errorMsg", "message") val msg: String,
+        @JsonAlias("jsondata") val data: String?
 ) {
-    val isSuccessful get() = errno == 200
+    val isSuccessful get() = errno == CODE_OK
 }
 
 private data class Wrapper<T>(val wrapper: T)

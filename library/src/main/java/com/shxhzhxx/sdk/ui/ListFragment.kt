@@ -31,6 +31,7 @@ abstract class ListFragment<M, VH : RecyclerView.ViewHolder, A : RecyclerView.Ad
         listRecyclerView.itemAnimator = onItemAnimator()
         listRecyclerView.layoutManager = onLayoutManager()
         listRecyclerView.adapter = adapter
+
         smartRefreshLayout.setOnRefreshListener { nextPage() }
         smartRefreshLayout.setOnLoadMoreListener { nextPage() }
         rootLayout.interceptor = { false }

@@ -85,10 +85,10 @@ uploadArchives {
     repositories {
         apply plugin: 'maven'
         mavenDeployer {
-            repository(url: "file://D://WorkSpace/myaar/repository/")
+            repository(url: "file://D://myaar/repository/")
             pom.groupId = "com.uuabc.lib"
             pom.artifactId = "androidsdk"
-            pom.version = "1.0.0"
+            pom.version = "2.0.0"
         }
     }
 }

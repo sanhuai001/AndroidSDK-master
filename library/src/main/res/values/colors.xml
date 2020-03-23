@@ -2,4 +2,6 @@
 <resources>
     <color name="videoPlayerControlColor">#b4000000</color>
     <color name="colorAccent">#3E71E0</color>
+    <color name="colorPrimaryDark">#FAFAFA</color>
+
 </resources>
