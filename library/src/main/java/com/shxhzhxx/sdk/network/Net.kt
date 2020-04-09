@@ -60,9 +60,9 @@ enum class PostType {
 }
 
 private data class Response(
-        @JsonAlias("errorCode", "code") val errno: Int,
-        @JsonAlias("tips", "errorMsg", "message") val msg: String,
-        @JsonAlias("jsondata") val data: String?
+        @JsonAlias("code") val errno: Int,
+        @JsonAlias("message, msg") val msg: String,
+        @JsonAlias("data") val data: String?
 ) {
     val isSuccessful get() = errno == CODE_OK
 }
@@ -77,23 +77,6 @@ open class StringDeserializer : StdDeserializer<String>(String::class.java) {
     }
 }
 
-//备用String反序列处理类
-//open class JsonStringDeserializer : com.fasterxml.jackson.databind.deser.std.StringDeserializer() {
-//    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): String {
-//        return try {
-//            super.deserialize(p, ctxt)
-//        } catch (e: Throwable) {
-//            when {
-//                p.currentToken == JsonToken.START_OBJECT ->
-//                    JSONObjectDeserializer.instance.deserialize(p, ctxt).toString()
-//                p.currentToken == JsonToken.START_ARRAY ->
-//                    JSONArrayDeserializer.instance.deserialize(p, ctxt).toString()
-//                else -> throw e
-//            }
-//        }
-//    }
-//}
-
 val regexQuote by lazy { Regex("^\\s*\"[\\S\\s]*\"\\s*$") }
 val mapper by lazy {
     ObjectMapper().apply {
@@ -101,27 +84,6 @@ val mapper by lazy {
         registerModule(JsonOrgModule().apply {
             addDeserializer(String::class.java, StringDeserializer())
 
-//尝试将解析失败的返回值置为null，但是这样会绕开kotlin的空安全检查。暂时没有找到合适的处理方法
-//        setDeserializerModifier(object : BeanDeserializerModifier() {
-//            override fun modifyDeserializer(
-//                    config: DeserializationConfig,
-//                    beanDesc: BeanDescription,
-//                    deserializer: JsonDeserializer<*>
-//            ): JsonDeserializer<*> {
-//                if (deserializer is BeanDeserializer) {
-//                    return object : BeanDeserializer(deserializer) {
-//                        override fun deserialize(p: JsonParser?, ctxt: DeserializationContext?): Any? {
-//                            return try {
-//                                super.deserialize(p, ctxt)
-//                            } catch (e: Throwable) {
-//                                null
-//                            }
-//                        }
-//                    }
-//                }
-//                return deserializer
-//            }
-//        })
         })
         configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, true)
@@ -192,6 +154,11 @@ class Net(context: Context) : TaskManager<(errno: Int, msg: String, data: Any?) 
 
     fun getMsg(errno: Int, defValue: String = defaultErrorMessage) = codeMsg[errno] ?: defValue
 
+    var headersCallback: ((headersMap: HashMap<String, String>) -> Unit)? = null
+    fun addHeaderCallBack(headersCallback: ((headersMap: HashMap<String, String>) -> Unit)? = null) {
+        this.headersCallback = headersCallback
+    }
+
     fun <T> request(key: Any, request: Request, type: JavaType, wrap: Boolean, lifecycle: Lifecycle? = null,
                     onResult: ((errno: Int, msg: String, data: Any?) -> Unit)? = null): Int {
         if (isRunning(key)) {
@@ -230,6 +197,7 @@ class Net(context: Context) : TaskManager<(errno: Int, msg: String, data: Any?) 
                                 noinline onResponse: ((msg: String, data: T) -> Unit)? = null,
                                 noinline onFailure: ((errno: Int, msg: String, data: String?) -> Unit)? = null): Int {
         val parameters = commonParams(params ?: JSONObject())
+        headersCallback?.invoke(headersMap)
         return inlineRequest(RequestKey(url, params), Request.Builder().also { builder ->
             builder.url(url)
             headersMap.forEach {

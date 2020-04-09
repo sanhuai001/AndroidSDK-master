@@ -3,6 +3,7 @@ package com.shxhzhxx.app
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -68,6 +69,12 @@ class MainActivity : BaseActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             setStatusBarColor(Color.WHITE)
         }
+
+        net.addHeaderCallBack(headersCallback = {
+            it["TokenAA"] = "jfjdsljfuerour1233"
+            it["uss_jjkk"] = "113322667788"
+            Log.i("testHeader", "yoxi")
+        })
 
         btn.setOnClickListener {
             launch {
