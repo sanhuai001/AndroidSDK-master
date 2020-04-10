@@ -61,7 +61,7 @@ enum class PostType {
 
 private data class Response(
         @JsonAlias("code") val errno: Int,
-        @JsonAlias("message, msg") val msg: String,
+        @JsonAlias("message, msg") val msg: String?,
         @JsonAlias("data") val data: String?
 ) {
     val isSuccessful get() = errno == CODE_OK
