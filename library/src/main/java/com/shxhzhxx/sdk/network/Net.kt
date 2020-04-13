@@ -301,7 +301,7 @@ class Net(context: Context) : TaskManager<(errno: Int, msg: String, data: Any?) 
                     Log.e(TAG, "execute IOException: ${e.message}")
                     return@run Triple(if (isNetworkAvailable) CODE_TIMEOUT else CODE_NO_AVAILABLE_NETWORK, null, null)
                 }.use { response ->
-                    if (!response.isSuccessful) {
+                    if (response.code() != 400 && !response.isSuccessful) {
                         Log.e(TAG, "HTTP code ${response.code()}")
                         return@run Triple(CODE_UNEXPECTED_RESPONSE, null, null)
                     }
