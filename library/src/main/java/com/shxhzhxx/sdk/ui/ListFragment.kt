@@ -21,7 +21,7 @@ abstract class ListFragment<M, VH : RecyclerView.ViewHolder, A : RecyclerView.Ad
     private val adapter by lazy { onAdapter() }
     protected val listSize: Int get() = _list.size
     protected val list: List<M> get() = _list.toList()
-    protected val canLoadMore = true
+    private var canLoadMore = true
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_list, container, false)
