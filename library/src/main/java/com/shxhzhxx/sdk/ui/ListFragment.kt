@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -45,6 +46,15 @@ abstract class ListFragment<M, VH : RecyclerView.ViewHolder, A : RecyclerView.Ad
 
     open fun onRefresh() {
         smartRefreshLayout?.autoRefresh()
+    }
+
+    open fun getHeaderViewGroup(): LinearLayout {
+        return llHeader
+    }
+
+    open fun setHeaderView(view: View) {
+        llHeader?.removeAllViews()
+        llHeader?.addView(view)
     }
 
     /**

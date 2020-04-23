@@ -16,10 +16,17 @@
         app:srlEnablePreviewInEditMode="false"
         app:srlPrimaryColor="@color/colorAccent">
 
-        <com.scwang.smartrefresh.header.MaterialHeader
-            android:id="@+id/header"
+        <LinearLayout
+            android:id="@+id/llHeader"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.scwang.smartrefresh.header.MaterialHeader
+                android:id="@+id/header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/listRecyclerView"
