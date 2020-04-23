@@ -21,7 +21,7 @@ abstract class ListFragment<M, VH : RecyclerView.ViewHolder, A : RecyclerView.Ad
     private val adapter by lazy { onAdapter() }
     protected val listSize: Int get() = _list.size
     protected val list: List<M> get() = _list.toList()
-    protected var canLoadMore = true
+    private var canLoadMore = true
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_list, container, false)
@@ -54,6 +54,7 @@ abstract class ListFragment<M, VH : RecyclerView.ViewHolder, A : RecyclerView.Ad
     }
 
     open fun setLoadMoreEnable(enableLoadMore: Boolean) {
+        canLoadMore = enableLoadMore
         smartRefreshLayout?.setEnableLoadMore(enableLoadMore)
     }
 
@@ -119,10 +120,10 @@ abstract class ListFragment<M, VH : RecyclerView.ViewHolder, A : RecyclerView.Ad
                     loading = false
                     smartRefreshLayout?.finishRefresh()
                     smartRefreshLayout?.finishLoadMore()
-                    smartRefreshLayout?.setEnableRefresh(canLoadMore)
+                    smartRefreshLayout?.setEnableRefresh(true)
                 },
                 onLoad = { list ->
-                    smartRefreshLayout?.setEnableLoadMore(list.size == pageSize())
+                    smartRefreshLayout?.setEnableLoadMore(canLoadMore && list.size == pageSize())
                     if (list.isNotEmpty()) {
                         val start = _list.size
                         _list.addAll(list)
