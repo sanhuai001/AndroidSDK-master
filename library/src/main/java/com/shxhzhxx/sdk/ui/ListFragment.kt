@@ -53,6 +53,7 @@ abstract class ListFragment<M, VH : RecyclerView.ViewHolder, A : RecyclerView.Ad
     }
 
     open fun setHeaderView(view: View) {
+        smartRefreshLayout?.setEnableHeaderTranslationContent(true)
         llHeader?.removeAllViews()
         llHeader?.addView(view)
     }
