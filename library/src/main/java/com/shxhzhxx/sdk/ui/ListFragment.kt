@@ -64,6 +64,11 @@ abstract class ListFragment<M, VH : RecyclerView.ViewHolder, A : RecyclerView.Ad
         llHeader?.addView(view)
     }
 
+    open fun setFoolterView(view: View) {
+        llFooter?.removeAllViews()
+        llFooter?.addView(view)
+    }
+
     /**
      * 返回值不要太小，尽量避免一屏高度可以显示一页数据的情况。
      */
@@ -123,12 +128,20 @@ abstract class ListFragment<M, VH : RecyclerView.ViewHolder, A : RecyclerView.Ad
                     smartRefreshLayout?.setEnableRefresh(true)
                 },
                 onLoad = { list ->
-                    smartRefreshLayout?.setEnableLoadMore(canLoadMore && list.size == pageSize())
+                    val enableLoadMore = canLoadMore && list.size == pageSize()
+                    smartRefreshLayout?.setEnableLoadMore(enableLoadMore)
+                    if (!enableLoadMore) {
+                        noMoreDataCallBack()
+                    }
                     if (list.isNotEmpty()) {
                         val start = _list.size
                         _list.addAll(list)
                         adapter.notifyItemRangeInserted(start, _list.size)
                     }
                 })
+    }
+
+    open fun noMoreDataCallBack() {
+
     }
 }
