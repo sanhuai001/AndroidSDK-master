@@ -22,6 +22,7 @@ abstract class ListFragment<M, VH : RecyclerView.ViewHolder, A : RecyclerView.Ad
     protected val listSize: Int get() = _list.size
     protected val list: List<M> get() = _list.toList()
     private var canLoadMore = true
+    private var isLoadComplete = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_list, container, false)
@@ -34,7 +35,10 @@ abstract class ListFragment<M, VH : RecyclerView.ViewHolder, A : RecyclerView.Ad
         listRecyclerView.layoutManager = onLayoutManager()
         listRecyclerView.adapter = adapter
 
-        smartRefreshLayout.setOnRefreshListener { nextPage() }
+        smartRefreshLayout.setOnRefreshListener {
+            isLoadComplete = false
+            nextPage()
+        }
         smartRefreshLayout.setOnLoadMoreListener { nextPage() }
         rootLayout.interceptor = { false }
         customizeView(context, view.findViewById(R.id.rooContentFl))
@@ -105,7 +109,7 @@ abstract class ListFragment<M, VH : RecyclerView.ViewHolder, A : RecyclerView.Ad
     protected operator fun get(position: Int) = _list[position]
 
     private fun nextPage() {
-        if (loading)
+        if (loading || isLoadComplete)
             return
         loading = true
 
@@ -131,6 +135,7 @@ abstract class ListFragment<M, VH : RecyclerView.ViewHolder, A : RecyclerView.Ad
                     val enableLoadMore = canLoadMore && list.size == pageSize()
                     smartRefreshLayout?.setEnableLoadMore(enableLoadMore)
                     if (!enableLoadMore) {
+                        isLoadComplete = true
                         noMoreDataCallBack()
                     }
                     if (list.isNotEmpty()) {
