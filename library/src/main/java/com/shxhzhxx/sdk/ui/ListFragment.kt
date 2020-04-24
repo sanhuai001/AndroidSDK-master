@@ -37,6 +37,7 @@ abstract class ListFragment<M, VH : RecyclerView.ViewHolder, A : RecyclerView.Ad
 
         smartRefreshLayout.setOnRefreshListener {
             isLoadComplete = false
+            smartRefreshLayout?.setEnableLoadMore(false)
             nextPage()
         }
         smartRefreshLayout.setOnLoadMoreListener { nextPage() }
