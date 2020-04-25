@@ -61,6 +61,7 @@ abstract class ListFragment<M, VH : RecyclerView.ViewHolder, A : RecyclerView.Ad
     open fun setLoadMoreEnable(enableLoadMore: Boolean) {
         canLoadMore = enableLoadMore
         smartRefreshLayout?.setEnableLoadMore(enableLoadMore)
+        smartRefreshLayout?.finishLoadMore()
     }
 
     open fun setHeaderView(view: View) {
@@ -72,6 +73,12 @@ abstract class ListFragment<M, VH : RecyclerView.ViewHolder, A : RecyclerView.Ad
     open fun setFoolterView(view: View) {
         llFooter?.removeAllViews()
         llFooter?.addView(view)
+    }
+
+    open fun isRecyclerScrollable(): Boolean {
+        val layoutManager = listRecyclerView.layoutManager as LinearLayoutManager
+        val adapter = listRecyclerView.adapter
+        return layoutManager.findLastCompletelyVisibleItemPosition() < adapter?.itemCount?.minus(1) ?: -1
     }
 
     /**
@@ -110,7 +117,14 @@ abstract class ListFragment<M, VH : RecyclerView.ViewHolder, A : RecyclerView.Ad
     protected operator fun get(position: Int) = _list[position]
 
     private fun nextPage() {
-        if (loading || isLoadComplete)
+        if (isLoadComplete) {
+            smartRefreshLayout?.finishRefresh()
+            smartRefreshLayout?.finishLoadMore()
+            smartRefreshLayout?.setEnableRefresh(true)
+            return
+        }
+
+        if (loading)
             return
         loading = true
 
