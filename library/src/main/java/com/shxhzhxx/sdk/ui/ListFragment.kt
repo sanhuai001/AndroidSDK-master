@@ -119,7 +119,7 @@ abstract class ListFragment<M, VH : RecyclerView.ViewHolder, A : RecyclerView.Ad
     private fun nextPage() {
         if (isLoadComplete) {
             smartRefreshLayout?.finishRefresh()
-            smartRefreshLayout?.finishLoadMore()
+//            smartRefreshLayout?.finishLoadMore()
             smartRefreshLayout?.setEnableRefresh(true)
             return
         }
