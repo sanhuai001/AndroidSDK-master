@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.scwang.smartrefresh.header.MaterialHeader
+import com.scwang.smartrefresh.layout.SmartRefreshLayout
 import com.shxhzhxx.sdk.CoroutineFragment
 import com.shxhzhxx.sdk.R
 import kotlinx.android.synthetic.main.fragment_list.*
@@ -71,6 +72,10 @@ abstract class ListFragment<M, VH : RecyclerView.ViewHolder, A : RecyclerView.Ad
     open fun setFoolterView(view: View) {
         llFooter?.removeAllViews()
         llFooter?.addView(view)
+    }
+
+    open fun getSmartRefreshLayout(): SmartRefreshLayout {
+        return smartRefreshLayout
     }
 
     /**
