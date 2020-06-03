@@ -43,7 +43,6 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 const val TAG = "Net"
-const val CODE_OK = 200
 const val CODE_NO_AVAILABLE_NETWORK = -1
 const val CODE_TIMEOUT = -2
 const val CODE_UNEXPECTED_RESPONSE = -3
@@ -60,12 +59,10 @@ enum class PostType {
 }
 
 private data class Response(
-        @JsonAlias("code") val errno: Int,
-        @JsonAlias("message, msg") val msg: String?,
-        @JsonAlias("data") val data: String?
-) {
-    val isSuccessful get() = errno == CODE_OK
-}
+        @JsonAlias("errorCode", "code") val errno: Int,
+        @JsonAlias("tips", "errorMsg", "message") val msg: String?,
+        @JsonAlias("jsondata") val data: String?
+)
 
 private data class Wrapper<T>(val wrapper: T)
 
@@ -128,6 +125,7 @@ class Net(context: Context) : TaskManager<(errno: Int, msg: String, data: Any?) 
         }
     }
 
+    var CODE_OK = 200
     val codeMsg = mutableMapOf(
             CODE_OK to context.resources.getString(R.string.err_msg_ok),
             CODE_NO_AVAILABLE_NETWORK to context.resources.getString(R.string.err_msg_no_available_network),
@@ -330,10 +328,10 @@ class Net(context: Context) : TaskManager<(errno: Int, msg: String, data: Any?) 
 
                     return@run (if (wrap) {
                         val response = mapper.readValue<Response>(raw)
-                        if (!response.isSuccessful) {
-                            Triple(response.errno, response.msg, response.data)
-                        } else {
+                        if (response.errno == CODE_OK) {
                             Triple(response.errno, response.msg, mapper.readValue<T>(response.data, type))
+                        } else {
+                            Triple(response.errno, response.msg, response.data)
                         }
                     } else Triple(CODE_OK, null, resolve(raw))).also {
                         if (debugMode) {
@@ -357,6 +355,7 @@ class Net(context: Context) : TaskManager<(errno: Int, msg: String, data: Any?) 
         }
     }
 }
+
 
 /**
  * 将json格式的请求参数转化成表单格式提交，转化过程中可能对特殊字符转码
