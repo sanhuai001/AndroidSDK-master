@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.shxhzhxx.sdk.activity.setStatusBarColor
 import com.shxhzhxx.sdk.net
-import com.shxhzhxx.sdk.ui.ListFragment
+import com.shxhzhxx.sdk.ui.ListExtendFragment
 import com.shxhzhxx.sdk.utils.Param
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.item_main.view.*
@@ -149,7 +149,7 @@ val eee = Param("eee", 0f)
 val invalid = Param("eee", Model("aaa"))
 
 
-class MainFragment : ListFragment<Unit, RecyclerView.ViewHolder, MainFragment.MainAdapter>() {
+class MainExtendFragment : ListExtendFragment<Unit, RecyclerView.ViewHolder, MainExtendFragment.MainAdapter>() {
     inner class MainAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
                 object : RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_main, parent, false)) {}

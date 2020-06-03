@@ -13,10 +13,10 @@ import com.scwang.smartrefresh.header.MaterialHeader
 import com.scwang.smartrefresh.layout.SmartRefreshLayout
 import com.shxhzhxx.sdk.CoroutineFragment
 import com.shxhzhxx.sdk.R
-import kotlinx.android.synthetic.main.fragment_list.*
+import kotlinx.android.synthetic.main.fragment_extend_list.*
 import java.util.*
 
-abstract class ListFragment<M, VH : RecyclerView.ViewHolder, A : RecyclerView.Adapter<VH>> : CoroutineFragment() {
+abstract class ListExtendFragment<M, VH : RecyclerView.ViewHolder, A : RecyclerView.Adapter<VH>> : CoroutineFragment() {
     private val _list = ArrayList<M>()
     private var loading = false
     private val adapter by lazy { onAdapter() }
@@ -25,7 +25,7 @@ abstract class ListFragment<M, VH : RecyclerView.ViewHolder, A : RecyclerView.Ad
     private var canLoadMore = true
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_list, container, false)
+        return inflater.inflate(R.layout.fragment_extend_list, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
