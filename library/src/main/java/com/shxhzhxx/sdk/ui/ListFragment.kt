@@ -114,16 +114,16 @@ abstract class ListFragment<M, VH : RecyclerView.ViewHolder, A : RecyclerView.Ad
     protected operator fun get(position: Int) = _list[position]
 
     private fun nextPage() {
-        if (loading)
+        if (loading || !isAdded || smartRefreshLayout == null)
             return
         loading = true
 
         val refresh = smartRefreshLayout.state.isHeader
         val page = pageStartAt() + if (refresh) 0 else _list.size / pageSize()
         if (refresh) {
-            smartRefreshLayout.setEnableLoadMore(false)
+            smartRefreshLayout?.setEnableLoadMore(false)
         } else {
-            smartRefreshLayout.setEnableRefresh(false)
+            smartRefreshLayout?.setEnableRefresh(false)
         }
         onNextPage(page,
                 onResult = {
