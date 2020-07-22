@@ -22,10 +22,11 @@ abstract class ListExtendFragment<M, VH : RecyclerView.ViewHolder, A : RecyclerV
     private val adapter by lazy { onAdapter() }
     protected val listSize: Int get() = _list.size
     protected val list: List<M> get() = _list.toList()
+    protected var showNoMore = false
     private var canLoadMore = true
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_extend_list, container, false)
+        return inflater.inflate(if (showNoMore) R.layout.fragment_extend_list2 else R.layout.fragment_extend_list, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
