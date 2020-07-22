@@ -29,7 +29,7 @@ abstract class DownloadActivity : ForResultActivity() {
         var id: Long? = null
         return try {
             suspendCancellableCoroutine { continuation ->
-                id = download(url, name, onLoad = { continuation.resume(it) }, onFailure = { id = null;continuation.resumeWithException(CancellationException()) })
+                id = download(url, name, onLoad = { continuation.resume(it as Nothing) }, onFailure = { id = null;continuation.resumeWithException(CancellationException()) })
             }
         } catch (e: CancellationException) {
             id?.let { downloadManager.remove(it) }
