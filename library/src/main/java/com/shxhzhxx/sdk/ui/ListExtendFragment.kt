@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.fragment_extend_list.*
 import java.util.*
 
 abstract class ListExtendFragment<M, VH : RecyclerView.ViewHolder, A : RecyclerView.Adapter<VH>> : CoroutineFragment() {
-    private val _list = ArrayList<M>()
+    protected val _list = ArrayList<M>()
     private var loading = false
     private val adapter by lazy { onAdapter() }
     protected val listSize: Int get() = _list.size
