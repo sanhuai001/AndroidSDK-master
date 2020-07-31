@@ -146,13 +146,14 @@ abstract class ListExtendFragment<M, VH : RecyclerView.ViewHolder, A : RecyclerV
                 onLoad = { list ->
                     val enableLoadMore = canLoadMore && list.size == pageSize()
                     smartRefreshLayout?.setEnableLoadMore(enableLoadMore)
-                    if (!enableLoadMore) {
-                        noMoreDataCallBack()
-                    }
                     if (list.isNotEmpty()) {
                         val start = _list.size
                         _list.addAll(list)
                         adapter.notifyItemRangeInserted(start, _list.size)
+                    }
+
+                    if (!enableLoadMore) {
+                        noMoreDataCallBack()
                     }
                 })
     }
