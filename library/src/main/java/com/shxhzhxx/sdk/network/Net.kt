@@ -59,7 +59,7 @@ enum class PostType {
 }
 
 private data class Response(
-        @JsonAlias("errorCode", "code") val errno: Int,
+        @JsonAlias("errorCode", "code", "error_no") val errno: Int,
         @JsonAlias("tips", "errorMsg", "message") val msg: String?,
         @JsonAlias("jsondata") val data: String?
 )
