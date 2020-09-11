@@ -59,7 +59,7 @@ enum class PostType {
 }
 
 private data class Response(
-        @JsonAlias("errorCode", "code", "error_no") val errno: Int,
+        @JsonAlias("errorCode", "code") val errno: Int,
         @JsonAlias("tips", "errorMsg", "message") val msg: String?,
         @JsonAlias("jsondata") val data: String?
 )
@@ -157,6 +157,11 @@ class Net(context: Context) : TaskManager<(errno: Int, msg: String, data: Any?) 
         this.headersCallback = headersCallback
     }
 
+    var onError: ((errno: Int, msg: String, data: String?) -> Unit)? = null
+    fun setErrorCallBack(onError: ((errno: Int, msg: String, data: String?) -> Unit)? = null) {
+        this.onError = onError
+    }
+
     fun <T> request(key: Any, request: Request, type: JavaType, wrap: Boolean, lifecycle: Lifecycle? = null,
                     onResult: ((errno: Int, msg: String, data: Any?) -> Unit)? = null): Int {
         if (isRunning(key)) {
@@ -183,10 +188,14 @@ class Net(context: Context) : TaskManager<(errno: Int, msg: String, data: Any?) 
                 if (errno == CODE_OK) {
                     if (data is T)
                         onResponse?.invoke(msg, data)
-                    else
-                        onFailure?.invoke(CODE_UNEXPECTED_RESPONSE, getMsg(CODE_UNEXPECTED_RESPONSE), data as? String)
+                    else {
+                        val errorMsg = getMsg(CODE_UNEXPECTED_RESPONSE)
+                        onFailure?.invoke(CODE_UNEXPECTED_RESPONSE, errorMsg, data as? String)
+                        onError?.invoke(CODE_UNEXPECTED_RESPONSE, errorMsg, data as? String)
+                    }
                 } else {
                     onFailure?.invoke(errno, msg, data as? String)
+                    onError?.invoke(errno, msg, data as? String)
                 }
             }
 
@@ -232,14 +241,21 @@ class Net(context: Context) : TaskManager<(errno: Int, msg: String, data: Any?) 
                 id?.let { unregister(it) }
                 if (e !is InternalCancellationException) {
                     onFailure?.invoke(CODE_CANCELED, getMsg(CODE_CANCELED), null)
+                    onError?.invoke(CODE_CANCELED, getMsg(CODE_CANCELED), null)
                     throw e
                 }
                 if (--maxTimes < 0) {
                     onFailure?.invoke(e.errno, e.msg, e.data)
+                    onError?.invoke(e.errno, e.msg, e.data)
                     throw e
                 }
                 val action = retryList.find { e.errno in it.first }?.second
-                        ?: { errno, msg, data -> onFailure?.invoke(errno, msg, data);throw e }
+                        ?: { errno, msg, data ->
+                            run {
+                                onFailure?.invoke(errno, msg, data)
+                                onError?.invoke(errno, msg, data)
+                            };throw e
+                        }
                 coroutineScope {
                     lifecycle?.addObserver(object : LifecycleObserver {
                         @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
@@ -251,6 +267,7 @@ class Net(context: Context) : TaskManager<(errno: Int, msg: String, data: Any?) 
                         action(e.errno, e.msg, e.data)
                     } catch (whatever: Throwable) {
                         onFailure?.invoke(e.errno, e.msg, e.data)
+                        onError?.invoke(e.errno, e.msg, e.data)
                         throw e
                     }
                 }
