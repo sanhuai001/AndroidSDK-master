@@ -20,19 +20,21 @@
 
     <ImageView
         android:id="@+id/share"
-        android:src="@drawable/icon_share"
-        android:layout_gravity="end"
-        android:padding="25dp"
         android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
         android:adjustViewBounds="true"
-        android:layout_height="wrap_content" />
+        android:padding="25dp"
+        android:src="@drawable/icon_share"
+        android:visibility="gone" />
 
     <ImageView
         android:id="@+id/download"
-        android:src="@drawable/icon_download"
-        android:layout_gravity="end|bottom"
-        android:padding="25dp"
         android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
         android:adjustViewBounds="true"
-        android:layout_height="wrap_content" />
+        android:padding="25dp"
+        android:src="@drawable/icon_download"
+        android:visibility="gone" />
 </FrameLayout>

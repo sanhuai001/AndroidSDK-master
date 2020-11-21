@@ -32,7 +32,9 @@ abstract class ListFragment<M, VH : RecyclerView.ViewHolder, A : RecyclerView.Ad
         listRecyclerView.layoutManager = onLayoutManager()
         listRecyclerView.adapter = adapter
 
-        smartRefreshLayout.setOnRefreshListener { nextPage() }
+        smartRefreshLayout.setOnRefreshListener {
+            onRefresh()
+        }
         smartRefreshLayout.setOnLoadMoreListener { nextPage() }
         rootLayout.interceptor = { false }
         customizeView(context, view.findViewById(R.id.rooContentFl))
@@ -45,6 +47,7 @@ abstract class ListFragment<M, VH : RecyclerView.ViewHolder, A : RecyclerView.Ad
 
     open fun onRefresh() {
         smartRefreshLayout?.autoRefresh()
+        nextPage()
     }
 
     /**

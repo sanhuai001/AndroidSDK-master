@@ -58,20 +58,20 @@ class ImageViewerActivity : ForResultActivity(), View.OnClickListener {
         setContentView(R.layout.activity_image_viewer)
 
         val position = intent.getIntExtra("position", -1)
-        if (paths == null || position >= paths.size || position < 0) {
+        if (paths == null || position >= paths!!.size || position < 0) {
             Log.e(TAG, "Invalid params. paths:$paths   position:$position")
             return
         }
 
-        indicator.visibility = if (paths.size < 2) View.INVISIBLE else View.VISIBLE
+        indicator.visibility = if (paths!!.size < 2) View.INVISIBLE else View.VISIBLE
         var transition = intent.getBooleanExtra("transition", false)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && transition) {
             supportPostponeEnterTransition()
-            pager.transitionName = paths[position]
+            pager.transitionName = paths!![position]
         }
         share.setOnClickListener {
             launch {
-                val file = paths[pager.currentItem].toFile()
+                val file = paths!![pager.currentItem].toFile()
                 startActivity(Intent.createChooser(Intent().apply {
                     action = Intent.ACTION_SEND
                     putExtra(Intent.EXTRA_STREAM, exposeUriForFile(file))
@@ -81,12 +81,12 @@ class ImageViewerActivity : ForResultActivity(), View.OnClickListener {
         }
         download.setOnClickListener {
             requestPermissions(listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), onGrant = {
-                launch { paths[pager.currentItem].toFile().saveImage() }
+                launch { paths!![pager.currentItem].toFile().saveImage() }
             })
         }
         pager.offscreenPageLimit = 2
         pager.adapter = object : PagerAdapter() {
-            override fun getCount() = paths.size
+            override fun getCount() = paths!!.size
 
             override fun isViewFromObject(view: View, obj: Any) = view === obj
 
@@ -99,7 +99,7 @@ class ImageViewerActivity : ForResultActivity(), View.OnClickListener {
                     }
                 }
 
-                val path = paths[position]
+                val path = paths!![position]
                 if (transition) {
                     transition = false
                     launchFinally({ supportStartPostponedEnterTransition() }) {
@@ -120,10 +120,10 @@ class ImageViewerActivity : ForResultActivity(), View.OnClickListener {
         val listener = object : ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    pager.transitionName = paths[position]
+                    pager.transitionName = paths!![position]
                 }
                 @SuppressLint("SetTextI18n")
-                indicator.text = "${position + 1}/${paths.size}"
+                indicator.text = "${position + 1}/${paths!!.size}"
             }
         }
         pager.addOnPageChangeListener(listener)
@@ -144,7 +144,7 @@ class ImageViewerActivity : ForResultActivity(), View.OnClickListener {
 
     private suspend fun File.saveImage() {
         convert {
-            val dst = createPictureFile()
+            val dst = createPictureFile(this@ImageViewerActivity)
                     ?: run { runOnUiThread { toast(getString(R.string.unavailable_external_storage)) };return@convert }
             if (this copyTo dst) {
                 runOnUiThread {

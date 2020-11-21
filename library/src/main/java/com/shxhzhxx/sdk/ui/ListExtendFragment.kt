@@ -36,7 +36,7 @@ abstract class ListExtendFragment<M, VH : RecyclerView.ViewHolder, A : RecyclerV
         listRecyclerView.layoutManager = onLayoutManager()
         listRecyclerView.adapter = adapter
 
-        smartRefreshLayout.setOnRefreshListener { nextPage() }
+        smartRefreshLayout.setOnRefreshListener { onRefresh() }
         smartRefreshLayout.setOnLoadMoreListener { nextPage() }
         rootLayout.interceptor = { false }
         customizeView(context, view.findViewById(R.id.rooContentFl))
@@ -51,6 +51,7 @@ abstract class ListExtendFragment<M, VH : RecyclerView.ViewHolder, A : RecyclerV
     open fun onRefresh() {
         removeFoolterView()
         smartRefreshLayout?.autoRefresh()
+        nextPage()
     }
 
     open fun getHeaderViewGroup(): LinearLayout {

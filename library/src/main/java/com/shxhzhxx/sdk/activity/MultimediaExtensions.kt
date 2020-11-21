@@ -6,7 +6,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
-import android.os.Environment.getExternalStoragePublicDirectory
 import android.provider.MediaStore
 import androidx.core.content.FileProvider
 import com.shxhzhxx.sdk.imageLoader
@@ -71,7 +70,8 @@ fun ForResultActivity.openDocument(type: DocumentType = DocumentType.IMAGE, onOp
 fun ForResultActivity.takePicture(onTake: (Uri, File) -> Unit, onFailure: (() -> Unit)? = null) {
     launch {
         requestPermissionsCoroutine(listOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE), onFailure)
-        val file = createPictureFile() ?: run { onFailure?.invoke(); return@launch }
+        val file = createPictureFile(applicationContext)
+                ?: run { onFailure?.invoke(); return@launch }
         val uri = exposeUriForFile(file)
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
@@ -101,9 +101,9 @@ suspend fun ForResultActivity.takePictureCoroutine(onFailure: (() -> Unit)? = nu
 
 fun Context.exposeUriForFile(file: File): Uri = FileProvider.getUriForFile(this, "$packageName.FileProvider", file)
 
-fun createPictureFile() = if (!isExternalStorageWritable) null else try {
+fun createPictureFile(context: Context) = if (!isExternalStorageWritable) null else try {
     File.createTempFile(imageLoader.bitmapLoader.urlLoader.md5(UUID.randomUUID().toString()), ".jpg",
-            getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES))
+            context.getExternalFilesDir(Environment.DIRECTORY_PICTURES))
 } catch (e: IOException) {
     null
 }
@@ -136,7 +136,8 @@ fun ForResultActivity.cropPicture(picture: Uri, aspectX: Float, aspectY: Float, 
                                   maxWidth: Int = Int.MAX_VALUE, maxHeight: Int = Int.MAX_VALUE, onFailure: (() -> Unit)? = null) {
     launch {
         requestPermissionsCoroutine(listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), onFailure)
-        val file = createPictureFile() ?: run { onFailure?.invoke(); return@launch }
+        val file = createPictureFile(applicationContext)
+                ?: run { onFailure?.invoke(); return@launch }
         val uri = Uri.fromFile(file)
         val intent = UCrop.of(picture, uri).withAspectRatio(aspectX, aspectY)
                 .withMaxResultSize(maxWidth, maxHeight).getIntent(this@cropPicture)
