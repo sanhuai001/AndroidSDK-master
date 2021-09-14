@@ -8,7 +8,7 @@ import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -29,7 +29,7 @@ abstract class CoroutineActivity : AppCompatActivity(), CoroutineScope {
 
     override val coroutineContext: CoroutineContext
         get() = vm.coroutineContext
-    private val vm by lazy { ViewModelProviders.of(this).get(MyViewModel::class.java) }
+    private val vm by lazy { ViewModelProvider(this)[MyViewModel::class.java] }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -7,8 +7,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.shxhzhxx.sdk.activity.cropPictureCoroutine
+import com.shxhzhxx.sdk.activity.openDocumentCoroutine
 import com.shxhzhxx.sdk.activity.setStatusBarColor
-import com.shxhzhxx.sdk.activity.takePictureCoroutine
 import com.shxhzhxx.sdk.net
 import com.shxhzhxx.sdk.ui.ListExtendFragment
 import com.shxhzhxx.sdk.utils.Param
@@ -78,18 +79,25 @@ class MainActivity : BaseActivity() {
         })
 
         btn.setOnClickListener {
-            /* launch {
-                 net.postCoroutine<Config>(api2, onResponse = { msg, data ->
-                     println("onResponse  $msg   $data")
-                 }, onFailure = { errno, msg, data ->
-                     println("onFailure   $errno   $msg   $data")
-                 })
-             }*/
+            launch {
+                net.postCoroutine<Config>(api2, onResponse = { msg, data ->
+                    println("onResponse  $msg   $data")
+                }, onFailure = { errno, msg, data ->
+                    println("onFailure   $errno   $msg   $data")
+                })
+            }
 
             launch {
-                val (uri, file) = takePictureCoroutine()
-                Log.i("takePictureCoroutine", "uri:" + uri)
-                Log.i("takePictureCoroutine", "filePath:" + file.path)
+//                val (uri, file) = takePictureCoroutine()
+//                Log.i("takePictureCoroutine", "uri:" + uri)
+//                Log.i("takePictureCoroutine", "filePath:" + file.path)
+
+                val file = cropPictureCoroutine(
+                    openDocumentCoroutine().also { Log.d(TAG, it.toString()) },
+                    4f,
+                    3f,
+                    600
+                ).file
             }
         }
     }

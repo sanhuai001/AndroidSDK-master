@@ -41,7 +41,7 @@ class VideoViewerActivity : ForResultActivity() {
 
             video.setDataSource(uri)
         } catch (e: Throwable) {
-            video.setDataSource(path)
+            video.setDataSource(path ?: "")
         }
         video.start()
     }

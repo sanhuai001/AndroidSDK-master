@@ -59,9 +59,10 @@ enum class PostType {
 }
 
 private data class Response(
-        @JsonAlias("errorCode", "code") val errno: Int,
-        @JsonAlias("tips", "errorMsg", "message") val msg: String?,
-        @JsonAlias("jsondata") val data: String?
+    @JsonAlias("errorCode", "code") val errno: Int,
+    @JsonAlias("tips", "errorMsg", "message") val msg: String?,
+    @JsonAlias("jsondata") val data: String?,
+    val systemTime: Long?
 )
 
 private data class Wrapper<T>(val wrapper: T)
@@ -146,6 +147,7 @@ class Net(context: Context) : TaskManager<(errno: Int, msg: String, data: Any?) 
     private val lifecycleSet = HashSet<Lifecycle>()
     var commonParams: (JSONObject) -> JSONObject = { it }
     var headersMap = HashMap<String, String>()
+    var systemTime: Long = System.currentTimeMillis()
 
     val isNetworkAvailable get() = connMgr.activeNetworkInfo?.isConnected == true
     val isWifiAvailable get() = isNetworkAvailable && connMgr.activeNetworkInfo?.type == ConnectivityManager.TYPE_WIFI
@@ -346,7 +348,15 @@ class Net(context: Context) : TaskManager<(errno: Int, msg: String, data: Any?) 
                     return@run (if (wrap) {
                         val response = mapper.readValue<Response>(raw)
                         if (response.errno == CODE_OK) {
-                            Triple(response.errno, response.msg, mapper.readValue<T>(response.data, type))
+                            systemTime = 0L
+                            response.systemTime?.let {
+                                systemTime = response.systemTime
+                            }
+                            Triple(
+                                response.errno,
+                                response.msg,
+                                mapper.readValue<T>(response.data, type)
+                            )
                         } else {
                             Triple(response.errno, response.msg, response.data)
                         }
